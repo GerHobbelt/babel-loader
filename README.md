@@ -281,4 +281,6 @@ be passed to `babel.transform`.
 Given Babel's result object, allow loaders to make additional tweaks to it.
 
 
-## [License](http://couto.mit-license.org/)
+## License
+
+[MIT License](http://couto.mit-license.org/)
