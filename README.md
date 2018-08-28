@@ -28,7 +28,7 @@ __Notes:__ Issues with the output should be reported on the babel [issue tracker
 npm install babel-loader @babel/core @babel/preset-env webpack
 ```
 
-> webpack 4.x | babel-loader 7.x | babel 6.x
+> webpack 3.x | babel-loader 7.x | babel 6.x
 
 ```bash
 npm install babel-loader@7 babel-core babel-preset-env webpack
