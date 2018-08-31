@@ -51,7 +51,8 @@
     "prepublish-orig": "npm run clean && npm run build",
     "preversion-orig": "npm test",
     "test": "npm run lint && cross-env BABEL_ENV=test npm run build && npm run test-only",
-    "test-only": "nyc ava"
+    "test-only": "nyc ava",
+    "pub": "npm publish --access public"
   },
   "repository": {
     "type": "git",
