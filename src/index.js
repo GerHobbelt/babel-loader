@@ -1,4 +1,4 @@
-const babel = require("@babel/core");
+const babel = require("@gerhobbelt/babel-core");
 
 const pkg = require("../package.json");
 const cache = require("./cache");
@@ -79,9 +79,9 @@ async function loader(source, inputSourceMap, overrides) {
 
   if (!babel.loadPartialConfig) {
     throw new Error(
-      `babel-loader ^8.0.0-beta.3 requires @babel/core@7.0.0-beta.41, but ` +
+      `babel-loader ^8.0.0-beta.3 requires @gerhobbelt/babel-core@7.0.0-beta.41, but ` +
         `you appear to be using "${babel.version}". Either update your ` +
-        `@babel/core version, or pin you babel-loader version to 8.0.0-beta.2`,
+        `@gerhobbelt/babel-core version, or pin you babel-loader version to 8.0.0-beta.2`,
     );
   }
 
@@ -99,8 +99,8 @@ async function loader(source, inputSourceMap, overrides) {
       cacheDirectory = null,
       cacheIdentifier = JSON.stringify({
         options,
-        "@babel/core": transform.version,
-        "@babel/loader": pkg.version,
+        "@gerhobbelt/babel-core": transform.version,
+        "@gerhobbelt/babel-loader": pkg.version,
       }),
       metadataSubscribers = [],
     } = loaderOptions;

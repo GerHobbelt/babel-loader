@@ -43,7 +43,7 @@ test.cb("should output webpack's sourcemap", t => {
       rules: [
         {
           test: /\.jsx?/,
-          loader: babelLoader + "?presets[]=@babel/env",
+          loader: babelLoader + "?presets[]=@gerhobbelt/babel-env",
           exclude: /node_modules/,
         },
       ],

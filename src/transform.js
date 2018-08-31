@@ -1,4 +1,4 @@
-const babel = require("@babel/core");
+const babel = require("@gerhobbelt/babel-core");
 const promisify = require("util.promisify");
 const LoaderError = require("./Error");
 
@@ -48,7 +48,7 @@ function injectCaller(opts) {
 }
 
 // TODO: We can remove this eventually, I'm just adding it so that people have
-// a little time to migrate to the newer RCs of @babel/core without getting
+// a little time to migrate to the newer RCs of @gerhobbelt/babel-core without getting
 // hard-to-diagnose errors about unknown 'caller' options.
 let supportsCallerOptionFlag = undefined;
 function supportsCallerOption() {

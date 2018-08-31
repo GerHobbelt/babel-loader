@@ -61,7 +61,7 @@ test.cb("should output files to cache directory", t => {
           exclude: /node_modules/,
           options: {
             cacheDirectory: t.context.cacheDirectory,
-            presets: ["@babel/preset-env"],
+            presets: ["@gerhobbelt/babel-preset-env"],
           },
         },
       ],
@@ -96,7 +96,7 @@ test.cb.serial(
             exclude: /node_modules/,
             options: {
               cacheDirectory: true,
-              presets: ["@babel/preset-env"],
+              presets: ["@gerhobbelt/babel-preset-env"],
             },
           },
         ],
@@ -130,7 +130,7 @@ test.cb.serial(
         rules: [
           {
             test: /\.jsx?/,
-            loader: `${babelLoader}?cacheDirectory=true&presets[]=@babel/preset-env`,
+            loader: `${babelLoader}?cacheDirectory=true&presets[]=@gerhobbelt/babel-preset-env`,
             exclude: /node_modules/,
           },
         ],
@@ -167,7 +167,7 @@ test.cb.skip("should read from cache directory if cached file exists", t => {
           exclude: /node_modules/,
           options: {
             cacheDirectory: t.context.cacheDirectory,
-            presets: ["@babel/preset-env"],
+            presets: ["@gerhobbelt/babel-preset-env"],
           },
         },
       ],
@@ -205,7 +205,7 @@ test.cb("should have one file per module", t => {
           exclude: /node_modules/,
           options: {
             cacheDirectory: t.context.cacheDirectory,
-            presets: ["@babel/preset-env"],
+            presets: ["@gerhobbelt/babel-preset-env"],
           },
         },
       ],
@@ -240,7 +240,7 @@ test.cb("should generate a new file if the identifier changes", t => {
             options: {
               cacheDirectory: t.context.cacheDirectory,
               cacheIdentifier: "a",
-              presets: ["@babel/preset-env"],
+              presets: ["@gerhobbelt/babel-preset-env"],
             },
           },
         ],
@@ -259,7 +259,7 @@ test.cb("should generate a new file if the identifier changes", t => {
             options: {
               cacheDirectory: t.context.cacheDirectory,
               cacheIdentifier: "b",
-              presets: ["@babel/preset-env"],
+              presets: ["@gerhobbelt/babel-preset-env"],
             },
           },
         ],
@@ -303,7 +303,7 @@ test.cb("should allow to specify the .babelrc file", t => {
               cacheDirectory: t.context.cacheDirectory,
               extends: path.join(__dirname, "fixtures/babelrc"),
               babelrc: false,
-              presets: ["@babel/preset-env"],
+              presets: ["@gerhobbelt/babel-preset-env"],
             },
           },
         ],
@@ -322,7 +322,7 @@ test.cb("should allow to specify the .babelrc file", t => {
             exclude: /node_modules/,
             options: {
               cacheDirectory: t.context.cacheDirectory,
-              presets: ["@babel/preset-env"],
+              presets: ["@gerhobbelt/babel-preset-env"],
             },
           },
         ],
