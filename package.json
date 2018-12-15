@@ -1,6 +1,6 @@
 {
   "name": "@gerhobbelt/babel-loader",
-  "version": "8.0.0-2",
+  "version": "8.0.0-3",
   "description": "babel module loader for webpack",
   "files": [
     "lib"
@@ -16,13 +16,13 @@
     "util.promisify": "1.0.0"
   },
   "peerDependencies": {
-    "@gerhobbelt/babel-core": "^7.0.0",
+    "@gerhobbelt/babel-core": "~7.2.0-0",
     "webpack": ">=2"
   },
   "devDependencies": {
-    "@gerhobbelt/babel-cli": "7.0.0-beta.530006",
-    "@gerhobbelt/babel-core": "7.0.0-beta.530006",
-    "@gerhobbelt/babel-preset-env": "7.0.0-beta.530006",
+    "@gerhobbelt/babel-cli": "7.0.1-15",
+    "@gerhobbelt/babel-core": "7.0.1-15",
+    "@gerhobbelt/babel-preset-env": "7.0.1-15",
     "ava": "0.25.0",
     "babel-eslint": "9.0.0",
     "babel-plugin-istanbul": "5.0.1",
@@ -40,7 +40,7 @@
     "react-intl": "2.4.0",
     "react-intl-webpack-plugin": "0.2.0",
     "rimraf": "2.6.2",
-    "webpack": "4.17.1"
+    "webpack": "4.17.2"
   },
   "scripts": {
     "clean": "rimraf lib/",
