@@ -1,6 +1,6 @@
 {
   "name": "@gerhobbelt/babel-loader",
-  "version": "8.0.2-3",
+  "version": "8.0.4-3",
   "description": "babel module loader for webpack",
   "files": [
     "lib"
@@ -23,7 +23,7 @@
     "@gerhobbelt/babel-cli": "7.2.1-26",
     "@gerhobbelt/babel-core": "7.2.1-26",
     "@gerhobbelt/babel-preset-env": "7.2.1-26",
-    "@gerhobbelt/debug": "^3.1.1-1",
+    "@gerhobbelt/debug": "3.1.1-1",
     "ava": "1.0.1",
     "babel-eslint": "10.0.1",
     "babel-plugin-istanbul": "5.1.0",

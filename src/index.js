@@ -22,7 +22,9 @@ if (/^6\./.test(babel.version)) {
 const pkg = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
+const injectCaller = require("./injectCaller");
 
+const path = require("path");
 const loaderUtils = require("loader-utils");
 
 function subscribe(subscriber, metadata, context) {
@@ -52,9 +54,40 @@ async function loader(source, inputSourceMap, overrides) {
 
   let loaderOptions = loaderUtils.getOptions(this) || {};
 
+  if (loaderOptions.customize != null) {
+    if (typeof loaderOptions.customize !== "string") {
+      throw new Error(
+        "Customized loaders must be implemented as standalone modules.",
+      );
+    }
+    if (!path.isAbsolute(loaderOptions.customize)) {
+      throw new Error(
+        "Customized loaders must be passed as absolute paths, since " +
+          "babel-loader has no way to know what they would be relative to.",
+      );
+    }
+    if (overrides) {
+      throw new Error(
+        "babel-loader's 'customize' option is not available when already " +
+          "using a customized babel-loader wrapper.",
+      );
+    }
+
+    let override = require(loaderOptions.customize);
+    if (override.__esModule) override = override.default;
+
+    if (typeof override !== "function") {
+      throw new Error("Custom overrides must be functions.");
+    }
+    overrides = override(babel);
+  }
+
   let customOptions;
   if (overrides && overrides.customOptions) {
-    const result = await overrides.customOptions.call(this, loaderOptions);
+    const result = await overrides.customOptions.call(this, loaderOptions, {
+      source,
+      map: inputSourceMap,
+    });
     customOptions = result.custom;
     loaderOptions = result.loader;
   }
@@ -105,6 +138,7 @@ async function loader(source, inputSourceMap, overrides) {
     sourceFileName: filename,
   });
   // Remove loader related options
+  delete programmaticOptions.customize;
   delete programmaticOptions.cacheDirectory;
   delete programmaticOptions.cacheIdentifier;
   delete programmaticOptions.cacheCompression;
@@ -118,12 +152,13 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
-  const config = babel.loadPartialConfig(programmaticOptions);
+  const config = babel.loadPartialConfig(injectCaller(programmaticOptions));
   if (config) {
     let options = config.options;
     if (overrides && overrides.config) {
       options = await overrides.config.call(this, config, {
         source,
+        map: inputSourceMap,
         customOptions,
       });
     }
@@ -173,6 +208,7 @@ async function loader(source, inputSourceMap, overrides) {
       if (overrides && overrides.result) {
         result = await overrides.result.call(this, result, {
           source,
+          map: inputSourceMap,
           customOptions,
           config,
           options,
