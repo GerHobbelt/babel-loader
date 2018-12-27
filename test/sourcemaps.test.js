@@ -72,3 +72,193 @@ test.cb("should output webpack's sourcemap", t => {
     });
   });
 });
+
+test.cb("should output webpack's sourcemap properly when set 'inline'", t => {
+  const config = Object.assign({}, globalConfig, {
+    devtool: "source-map",
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader + "?presets[]=@babel/env&sourceMap=inline",
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
+
+    fs.readdir(t.context.directory, (err, files) => {
+      t.is(err, null);
+
+      const map = files.filter(file => file.indexOf(".map") !== -1);
+
+      t.true(map.length > 0);
+
+      if (map.length > 0) {
+        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
+          t.is(err, null);
+
+          const mapObj = JSON.parse(data.toString());
+
+          t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
+
+          // Ensure that the map contains the original code, not the
+          // compiled src.
+          t.is(mapObj.sourcesContent[1].indexOf("__esModule"), -1);
+          t.end();
+        });
+      }
+    });
+  });
+});
+
+test.cb("should output webpack's devtoolModuleFilename option", t => {
+  const config = Object.assign({}, globalConfig, {
+    devtool: "source-map",
+    output: {
+      path: t.context.directory,
+      devtoolModuleFilenameTemplate: "==[absolute-resource-path]==",
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader + "?presets[]=@babel/env",
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
+
+    fs.readdir(t.context.directory, (err, files) => {
+      t.is(err, null);
+
+      const map = files.filter(file => file.indexOf(".map") !== -1);
+
+      t.true(map.length > 0);
+
+      if (map.length > 0) {
+        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
+          t.is(err, null);
+
+          // The full absolute path is included in the sourcemap properly
+          t.not(
+            data
+              .toString()
+              .indexOf(JSON.stringify(`==${globalConfig.entry}==`)),
+            -1,
+          );
+
+          t.end();
+        });
+      }
+    });
+  });
+});
+
+test.only.cb("should disable sourcemap output with 'sourceMaps:true'", t => {
+  const config = Object.assign({}, globalConfig, {
+    devtool: "source-map",
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader + "?presets[]=@babel/env&sourceMaps=false",
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
+
+    fs.readdir(t.context.directory, (err, files) => {
+      t.is(err, null);
+
+      const map = files.filter(file => file.indexOf(".map") !== -1);
+
+      t.true(map.length > 0);
+
+      if (map.length > 0) {
+        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
+          t.is(err, null);
+
+          const mapObj = JSON.parse(data.toString());
+          t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
+
+          // Ensure that the code contains Babel's compiled output, because
+          // sourcemaps from Babel are disabled.
+          t.not(mapObj.sourcesContent[1].indexOf("__esModule"), -1);
+
+          t.end();
+        });
+      }
+    });
+  });
+});
+
+test.only.cb("should disable sourcemap output with 'sourceMap:true'", t => {
+  const config = Object.assign({}, globalConfig, {
+    devtool: "source-map",
+    output: {
+      path: t.context.directory,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.jsx?/,
+          loader: babelLoader + "?presets[]=@babel/env&sourceMap=false",
+          exclude: /node_modules/,
+        },
+      ],
+    },
+  });
+
+  webpack(config, (err, stats) => {
+    t.is(err, null);
+    t.is(stats.compilation.errors.length, 0);
+    t.is(stats.compilation.warnings.length, 0);
+
+    fs.readdir(t.context.directory, (err, files) => {
+      t.is(err, null);
+
+      const map = files.filter(file => file.indexOf(".map") !== -1);
+
+      t.true(map.length > 0);
+
+      if (map.length > 0) {
+        fs.readFile(path.resolve(t.context.directory, map[0]), (err, data) => {
+          t.is(err, null);
+
+          const mapObj = JSON.parse(data.toString());
+          t.is(mapObj.sources[1], "webpack:///./test/fixtures/basic.js");
+
+          // Ensure that the code contains Babel's compiled output, because
+          // sourcemaps from Babel are disabled.
+          t.not(mapObj.sourcesContent[1].indexOf("__esModule"), -1);
+
+          t.end();
+        });
+      }
+    });
+  });
+});

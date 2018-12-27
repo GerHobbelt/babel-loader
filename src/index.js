@@ -23,8 +23,6 @@ const pkg = require("../package.json");
 const cache = require("./cache");
 const transform = require("./transform");
 
-const relative = require("./utils/relative");
-
 const loaderUtils = require("loader-utils");
 
 function subscribe(subscriber, metadata, context) {
@@ -77,23 +75,39 @@ async function loader(source, inputSourceMap, overrides) {
     );
   }
 
-  // Set babel-loader's default options.
-  const {
-    sourceRoot = process.cwd(),
-    sourceMap = this.sourceMap,
-    sourceFileName = relative(sourceRoot, filename),
-  } = loaderOptions;
+  // Standardize on 'sourceMaps' as the key passed through to Webpack, so that
+  // users may safely use either one alongside our default use of
+  // 'this.sourceMap' below without getting error about conflicting aliases.
+  if (
+    Object.prototype.hasOwnProperty.call(loaderOptions, "sourceMap") &&
+    !Object.prototype.hasOwnProperty.call(loaderOptions, "sourceMaps")
+  ) {
+    loaderOptions = Object.assign({}, loaderOptions, {
+      sourceMaps: loaderOptions.sourceMap,
+    });
+    delete loaderOptions.sourceMap;
+  }
 
   const programmaticOptions = Object.assign({}, loaderOptions, {
     filename,
     inputSourceMap: inputSourceMap || undefined,
-    sourceRoot,
-    sourceMap,
-    sourceFileName,
+
+    // Set the default sourcemap behavior based on Webpack's mapping flag,
+    // but allow users to override if they want.
+    sourceMaps:
+      loaderOptions.sourceMaps === undefined
+        ? this.sourceMap
+        : loaderOptions.sourceMaps,
+
+    // Ensure that Webpack will get a full absolute path in the sourcemap
+    // so that it can properly map the module back to its internal cached
+    // modules.
+    sourceFileName: filename,
   });
   // Remove loader related options
   delete programmaticOptions.cacheDirectory;
   delete programmaticOptions.cacheIdentifier;
+  delete programmaticOptions.cacheCompression;
   delete programmaticOptions.metadataSubscribers;
 
   if (!babel.loadPartialConfig) {
@@ -114,6 +128,16 @@ async function loader(source, inputSourceMap, overrides) {
       });
     }
 
+    if (options.sourceMaps === "inline") {
+      // Babel has this weird behavior where if you set "inline", we
+      // inline the sourcemap, and set 'result.map = null'. This results
+      // in bad behavior from Babel since the maps get put into the code,
+      // which Webpack does not expect, and because the map we return to
+      // Webpack is null, which is also bad. To avoid that, we override the
+      // behavior here so "inline" just behaves like 'true'.
+      options.sourceMaps = true;
+    }
+
     const {
       cacheDirectory = null,
       cacheIdentifier = JSON.stringify({
@@ -121,6 +145,7 @@ async function loader(source, inputSourceMap, overrides) {
         "@gerhobbelt/babel-core": transform.version,
         "@gerhobbelt/babel-loader": pkg.version,
       }),
+      cacheCompression = true,
       metadataSubscribers = [],
     } = loaderOptions;
 
@@ -132,6 +157,7 @@ async function loader(source, inputSourceMap, overrides) {
         transform,
         cacheDirectory,
         cacheIdentifier,
+        cacheCompression,
       });
     } else {
       result = await transform(source, options);
